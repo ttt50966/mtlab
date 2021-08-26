@@ -33,8 +33,9 @@ def plot(line,dpiValue,title,xlabel,ylabel,saveFig):
     plt.legend(prop=dict(weight='bold'))
     if saveFig == True:
         plt.savefig(title+".png",dpi= dpiValue)
-        
+
 def moving_average(interval, windowsize):
+    import numpy as np
     """
     This is a smooth function
     interval is the original data
