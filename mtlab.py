@@ -35,12 +35,12 @@ def plot(line,dpiValue,title,xlabel,ylabel,saveFig):
         plt.savefig(title+".png",dpi= dpiValue)
 
 def moving_average(interval, windowsize):
-    import numpy as np
     """
     This is a smooth function
     interval is the original data
     windowsize can set 3~10
     """
+    import numpy as np
     window = np.ones(int(windowsize)) / float(windowsize)
     re = np.convolve(interval, window, 'same')
     return re
