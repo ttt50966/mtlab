@@ -1,5 +1,6 @@
 def plot(line,dpiValue,title,xlabel,ylabel,saveFig):
     """
+    This is a template for plotting
     line would be [{
         "x" : [],
         "y": [],
@@ -32,3 +33,13 @@ def plot(line,dpiValue,title,xlabel,ylabel,saveFig):
     plt.legend(prop=dict(weight='bold'))
     if saveFig == True:
         plt.savefig(title+".png",dpi= dpiValue)
+        
+def moving_average(interval, windowsize):
+    """
+    This is a smooth function
+    interval is the original data
+    windowsize can set 3~10
+    """
+    window = np.ones(int(windowsize)) / float(windowsize)
+    re = np.convolve(interval, window, 'same')
+    return re
