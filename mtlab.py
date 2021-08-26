@@ -48,10 +48,10 @@ def moving_average(interval, windowsize):
 def fitting_init():
     import os
     os.system("pip install lmfit")
-    import lmfit
     import numpy as np
 
 def diff_residual(params, x, y):
+    import numpy as np
     A = params['A'].value
     B = params['B'].value
     T = params['T'].value
@@ -67,19 +67,16 @@ def diff_fit_data(params, x):
     model = A*T**2*(2*H - 2*x)/(T**2 + (-H + x)**2)**2 - 2*B*T*(-H + x)*(2*H - 2*x)/(T**2 + (-H + x)**2)**2 - 2*B*T/(T**2 + (-H + x)**2)
     return model
 
-def diff_fitting(A,B,T,H):
+def diff_fitting(params,x,y):
   """
+  import lmfit
+  params = lmfit.Parameters() # Add new fitting objects
   params.add('A',value=-0.08)
   params.add('B',value=0.1)
   params.add('T', value=5)
   params.add('H', value=800)
   """
-  params = lmfit.Parameters() # Add new fitting objects
-  params.add('A',value=A)
-  params.add('B',value=B)
-  params.add('T', value=T)
-  params.add('H', value=H)
-
+  import lmfit
   #Utilize lmfit.minimize to find the local minmum "residual"
   out = lmfit.minimize(diff_residual, params, args=(x,y)) 
   return out
