@@ -13,7 +13,6 @@ def plot(line,dpiValue,title,xlabel,ylabel,saveFig):
     """
     import matplotlib.pyplot as plt
     plt.figure(dpi=dpiValue)
-    ax = plt.axes()
     plt.rcParams['figure.facecolor'] = 'white'
     plt.tight_layout(pad=3, w_pad=4.8, h_pad=3.6)
     plt.tick_params(direction = "in")
