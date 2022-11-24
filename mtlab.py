@@ -1,3 +1,8 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import lmfit
+import pandas as pd
 def plot(line,dpiValue,title,xlabel,ylabel,saveFig):
     """
     This is a template for plotting
@@ -11,7 +16,7 @@ def plot(line,dpiValue,title,xlabel,ylabel,saveFig):
     title, xlabel and ylabel are string
     saveFig is a boolean
     """
-    import matplotlib.pyplot as plt
+
     plt.figure(dpi=dpiValue)
     ax = plt.axes()
     plt.rcParams['figure.facecolor'] = 'white'
@@ -45,13 +50,9 @@ def moving_average(interval, windowsize):
     re = np.convolve(interval, window, 'same')
     return re
 
-def fitting_init():
-    import os
-    os.system("pip install lmfit")
-    import numpy as np
+
 
 def diff_residual(params, x, y):
-    import numpy as np
     A = params['A'].value
     B = params['B'].value
     T = params['T'].value
@@ -76,7 +77,90 @@ def diff_fitting(params,x,y):
   params.add('T', value=5)
   params.add('H', value=800)
   """
-  import lmfit
   #Utilize lmfit.minimize to find the local minmum "residual"
   out = lmfit.minimize(diff_residual, params, args=(x,y)) 
   return out
+def residual(params, x, y):
+  """
+  x = data[0]["x"][0:]
+  y = data[0]["y"][0:]
+  title = data[0]["label"]
+  params = lmfit.Parameters() # 新增Fitting參數物件
+  params.add('S',value=0)
+  params.add('A',value=0)
+  params.add('T', value=50)
+  params.add('c', value=-5)
+  params.add('Hfmr', value=200)
+  out = lmfit.minimize(mtlab.residual, params, args=(x,y)) #利用lmfit.minimize 找尋residual的局部極小值
+  plt.plot(x,y,label="data")
+  x_fit = np.arange(0,400,0.1)
+  plt.plot(x_fit,mtlab.fit_data(out.params,x_fit),label="fit")
+  plt.title(title)
+  out.params
+  """
+  S = params['S'].value
+  A = params['A'].value
+  T = params['T'].value
+  Hfmr = params['Hfmr'].value
+  c = params['c'].value
+  model = S* T**2/((x-Hfmr)**2+T**2) + A *T*(x-Hfmr)/((x-Hfmr)**2+T**2) + c
+  return np.sqrt((y-model)**2)
+def fit_data(params, x):
+  """
+  x = data[0]["x"][0:]
+  y = data[0]["y"][0:]
+  title = data[0]["label"]
+  params = lmfit.Parameters() # 新增Fitting參數物件
+  params.add('S',value=0)
+  params.add('A',value=0)
+  params.add('T', value=50)
+  params.add('c', value=-5)
+  params.add('Hfmr', value=200)
+  out = lmfit.minimize(mtlab.residual, params, args=(x,y)) #利用lmfit.minimize 找尋residual的局部極小值
+  plt.plot(x,y,label="data")
+  x_fit = np.arange(0,400,0.1)
+  plt.plot(x_fit,mtlab.fit_data(out.params,x_fit),label="fit")
+  plt.title(title)
+  out.params
+  """
+  S = params['S'].value
+  A = params['A'].value
+  T = params['T'].value
+  Hfmr = params['Hfmr'].value
+  c = params['c'].value
+  model = S* T**2/((x-Hfmr)**2+T**2) + A *T*(x-Hfmr)/((x-Hfmr)**2+T**2) + c
+  return model
+
+def residual_kittel(params, x, y):
+    u = 9.27401E-24
+    h = 6.62607E-34
+    g = params['g'].value
+    M = params['M'].value
+    model = g*u*np.sqrt(x*(x+M))*(1E-13)/h
+    model2 = np.array([np.roots([1, M, -(i/g/u*h/(1E-13))**2])[1] for i in y])
+    return np.sqrt((x-model2)**2+(y-model)**2)
+def fit_data_kittel(params, x):
+    u = 9.27401E-24
+    h = 6.62607E-34
+    g = params['g'].value
+    M = params['M'].value
+    model = g*u*np.sqrt(x*(x+M))*(1E-13)/h
+    return model
+def residual_damping(params, x, y):
+    uB = 9.27401E-21
+    h = 6.62607E-34
+    pi = 3.14159
+    g = params['g'].value
+    H0 = params['H0'].value
+    a = params['a'].value
+    model = 2*pi*a*h*x*1E16/(g*uB)+H0
+    return np.sqrt((y-model)**2)
+def fit_data_damping(params, x):
+    uB = 9.27401E-21
+    h = 6.62607E-34
+    pi = 3.14159
+    g = params['g'].value
+    H0 = params['H0'].value
+    a = params['a'].value
+    model = 2*pi*a*h*x*1E16/(g*uB)+H0
+    return model
