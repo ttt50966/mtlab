@@ -21,12 +21,15 @@ def plot(line, dpiValue, title, xlabel, ylabel, saveFig):
     plt.rcParams['figure.facecolor'] = 'white'
     
     # 使用 get 避免 Key Error，並設定預設值
+    # data["type"] 可設為 "scatter"（預設 "line"）
     for data in line:
         label = data.get("label", "")
-        if label:
-            plt.plot(data["x"], data["y"], label=label)
+        plot_type = data.get("type", "line")
+        kwargs = {"label": label} if label else {}
+        if plot_type == "scatter":
+            plt.scatter(data["x"], data["y"], **kwargs)
         else:
-            plt.plot(data["x"], data["y"])
+            plt.plot(data["x"], data["y"], **kwargs)
 
     # 圖表裝飾
     plt.xlabel(xlabel, fontweight="bold", fontsize="20")
